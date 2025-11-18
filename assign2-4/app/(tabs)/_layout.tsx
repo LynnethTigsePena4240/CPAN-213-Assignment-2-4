@@ -6,6 +6,9 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
@@ -24,12 +27,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="tasks"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Tasks',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checkmark.circle.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="motivation"
+        options={{
+          title: 'Motivation',
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons size={28} name="robot-happy" color={color} />,
         }}
       />
     </Tabs>
+    
   );
 }
