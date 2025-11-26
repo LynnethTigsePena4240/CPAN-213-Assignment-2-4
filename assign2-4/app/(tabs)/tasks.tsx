@@ -1,112 +1,188 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Button, StyleSheet,Text ,TextInput, FlatList, TouchableOpacity} from "react-native";
+import ProgressBar from "../components/progressBar";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
 
-export default function TabTwoScreen() {
+// manually creating space between each element 
+function Seperator(){
+  return <View style={styles.separator}></View>
+}
+
+type Task = { 
+  id: string; 
+  title: string; 
+  completed:boolean; 
+}
+
+
+export default function TaskPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState("");
+  const [progress, setProgress] = useState(0);
+
+  const addTask = () => {
+    if (newTask.trim() === "") return;
+    const task: Task = {
+      id: Date.now().toString(),
+      title: newTask,
+      completed: false,
+    };
+    setTasks([...tasks, task]);
+    setNewTask("");
+  };
+
+  const toggleTask = (id: string) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  // progress when tasks change
+  useEffect(() => {
+    const completedCount = tasks.filter((t) => t.completed).length;
+    const newProgress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+    setProgress(newProgress);
+  }, [tasks]);
+
+  let barColor = progress >= 100 ? "red" : "blue";
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <ProgressBar
+        progress={progress}
+        min={0}
+        max={100}
+        barColor={barColor}
+        backColor="#ddd"
+        borderColor="black"
+      />
+
+      <Seperator />
+      <Text style={styles.text}>{progress}%</Text>
+      <Seperator />
+
+      <Seperator />
+
+      <Text style={styles.text}>Task Manager</Text>
+      <Seperator />
+      <View style = { styles.inputContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder="Add a new task"
+        value={newTask}
+        onChangeText={setNewTask}
+      />
+      <Seperator />
+
+      <Button title="Add" onPress={addTask} />
+      <Seperator />
+      </View>
+    
+
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.taskContainer}>
+            <TouchableOpacity style= {styles.button} onPress={() => toggleTask(item.id)}>
+              <Text style={[styles.taskText,item.completed && styles.taskTextCompleted]}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+            <Button title="Delete" onPress={() => deleteTask(item.id)} />
+          </View>
+        )}
+      />
+    </View>
   );
 }
 
+
+
+
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    marginTop:0,
+    padding: 10,
+    backgroundColor: "#1e1e1e",
+    width:"auto",
+    alignItems:"center",
+    paddingTop:30
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#fff",
+    textAlign: "center",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 5,
+    marginLeft: 10,
+    width:500
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom:10,
+    color: "#000",
+    backgroundColor:"#ccc",
+    width:350
+    
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 10
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  taskContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 5,
+    marginVertical: 5,
+    backgroundColor: "#333",
+    borderRadius: 8,
+    paddingRight: 40,
+    width:500
+
+  },
+  taskText: {
+    fontSize: 16,
+    color: "#fff",
+  },
+  taskTextCompleted: {
+    fontSize: 16,
+    color: "#aaa",
+    textDecorationLine: "line-through",
+  },
+  separator: {
+    height: 1,
+    margin:10,
   },
 });
+

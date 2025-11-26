@@ -7,6 +7,7 @@ const API = 'https://zenquotes.io/api/random';
 interface quotesAPI{
   q: string;
   a: string;
+  
 }
 
 interface quotesProps{
@@ -15,12 +16,18 @@ interface quotesProps{
 }
 
 //UI components
-const Quote: React.FC<quotesProps> = ({quotes, author}) =>(
+// const Quote: React.FC<quotesProps> = ({quotes, author}) =>(
+//   <View>
+//     <Text style={styles.quotesText}>{quotes}</Text>
+//     <Text style={styles.quotesAuthor}> ~ {author}</Text>
+//   </View>
+// )
+const Quote = ({ quotes, author }: quotesProps) => (
   <View>
     <Text style={styles.quotesText}>{quotes}</Text>
     <Text style={styles.quotesAuthor}> ~ {author}</Text>
   </View>
-)
+);
 
 export default function MotivationScreen() {
   const [quote, setQuote] = useState<quotesAPI | null>(null);
