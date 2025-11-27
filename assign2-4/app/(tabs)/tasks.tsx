@@ -50,7 +50,7 @@ export default function TaskPage() {
     setProgress(newProgress);
   }, [tasks]);
 
-  let barColor = progress >= 100 ? "red" : "blue";
+  let barColor = progress >= 100 ? "green" : "blue";
 
   return (
     <View style={styles.container}>
