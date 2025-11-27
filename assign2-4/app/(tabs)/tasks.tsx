@@ -112,8 +112,6 @@ const styles = StyleSheet.create({
     marginTop:0,
     padding: 10,
     backgroundColor: "#1e1e1e",
-    width:"auto",
-    alignItems:"center",
     paddingTop:30
   },
   title: {
@@ -134,10 +132,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 5,
-    marginLeft: 10,
-    width:500
   },
   input: {
+    flex:1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -145,8 +142,6 @@ const styles = StyleSheet.create({
     marginBottom:10,
     color: "#000",
     backgroundColor:"#ccc",
-    width:350
-    
   },
   button: {
     paddingVertical: 12,
@@ -168,7 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#333",
     borderRadius: 8,
     paddingRight: 40,
-    width:500
 
   },
   taskText: {

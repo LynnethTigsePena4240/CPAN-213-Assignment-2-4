@@ -53,13 +53,13 @@ return (
 //Style for the bar
 const styles = StyleSheet.create({
 container: {
+  marginTop: 50,
   borderWidth: 1,
   height: 40,
   borderColor: "",
   padding: 0,
   overflow: "hidden",
   borderRadius:5,
-  width:500
   },
 
 bar: {
