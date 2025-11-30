@@ -1,10 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { View, Button, StyleSheet, Text, TextInput, FlatList, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Button, StyleSheet, Text, TextInput, FlatList, TouchableOpacity, Animated } from "react-native";
 import ProgressBar from "../components/progressBar";
 import { useTasks } from "../../stores/taskStore";
 
-function Seperator() {
+function Separator() {
   return <View style={styles.separator}></View>
+}
+
+// fade animation when task is added
+function TaskFade({item, onToggle, onDelete}) {
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
+
+  // fade in effect
+  useEffect(() => {
+    Animated.timing(fadeAnimation, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  // fade out when deleting task
+  const deleteTask = () => {
+    Animated.timing(fadeAnimation, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start(() => {
+      onDelete(item.id);
+    }); 
+  };
+
+  return (
+    <Animated.View style={[styles.taskContainer, { opacity: fadeAnimation }]}>
+      <TouchableOpacity style={styles.button} onPress={() => onToggle(item.id)}>
+        <Text style={[styles.taskText, item.completed && styles.taskTextCompleted]}>
+          {item.title}
+        </Text>
+      </TouchableOpacity>
+      <Button title="Delete" onPress={deleteTask} />
+    </Animated.View>
+  )
 }
 
 export default function TaskPage() {
@@ -28,7 +64,7 @@ export default function TaskPage() {
     <View style={styles.container}>
       <Text style={styles.title}>Task Manager</Text>
 
-      <Seperator />
+      <Separator />
 
       <View style={styles.progressSection}>
         <ProgressBar
@@ -40,14 +76,13 @@ export default function TaskPage() {
           borderColor="black"
         />
 
-        <Seperator />
+        <Separator />
         <Text style={styles.percentageText}>{progress}% Completed</Text>
       </View>
 
-      <Seperator />
-
+      <Separator />
       <Text style={styles.hintText}>Tap a task name to mark it complete!</Text>
-      <Seperator />
+      <Separator />
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -64,14 +99,11 @@ export default function TaskPage() {
         data={tasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.taskContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => toggleTask(item.id)}>
-              <Text style={[styles.taskText, item.completed && styles.taskTextCompleted]}>
-                {item.title}
-              </Text>
-            </TouchableOpacity>
-            <Button title="Delete" onPress={() => deleteTask(item.id)} />
-          </View>
+          <TaskFade
+            item={item}
+            onToggle={() => toggleTask(item.id)}
+            onDelete={() => deleteTask(item.id)}
+          />
         )}
       />
     </View>
