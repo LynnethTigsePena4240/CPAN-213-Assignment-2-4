@@ -14,7 +14,7 @@ type MotivationState = {
 }
 
 let motivationState: MotivationState = {
-    quote: { content: "Loading daily motivation...", author: "FocusHub App" },
+    quote: { content: "Loading daily motivation...", author: "" },
     isLoading: false,
     error: null,
 };

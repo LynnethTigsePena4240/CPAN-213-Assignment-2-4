@@ -30,7 +30,7 @@ export default function OverviewScreen() {
 
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
-          ✅ Top Tasks
+          Top Tasks
         </Text>
 
         {tasksToDisplay.length > 0 ? (
@@ -52,7 +52,7 @@ export default function OverviewScreen() {
 
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
-          ✨ Daily Motivation
+          Daily Motivation
         </Text>
         {isQuoteLoading ? (
           <Text style={[styles.cardContent, { color: colors.secondaryText, fontStyle: 'italic' }]}>
