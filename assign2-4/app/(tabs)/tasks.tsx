@@ -12,9 +12,19 @@ export default function TaskPage() {
   const [newTask, setNewTask] = useState("");
   const [progress, setProgress] = useState(0);
 
+  // bounce animation for task addition
+  const bounceTask = useRef(new Animated.Value(1)).current;
+
   const handleAddTask = () => {
     addTask(newTask);
     setNewTask("");
+
+    // animatioon to fade in task added
+    Animated.timing(fadeEffect, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
   };
 
   useEffect(() => {
