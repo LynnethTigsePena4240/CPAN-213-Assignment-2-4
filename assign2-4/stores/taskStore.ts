@@ -65,7 +65,7 @@ export const useTasks = () => {
     const getProgress = (): number => {
         const totalCount = tasksState.length;
         if (totalCount === 0) {
-            return 100;
+            return 0;
         }
         const completedCount = tasksState.filter((t) => t.completed).length;
         return Math.round((completedCount / totalCount) * 100);
