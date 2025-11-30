@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, Text, StyleSheet, Button, ActivityIndicator, useColorScheme } from 'react-native';
+import { ActivityIndicator, Button, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 
 const getThemedColors = (isDarkMode: boolean) => ({
@@ -56,7 +55,7 @@ export default function MotivationScreen() {
 
       <View style={styles.spacer} />
       <Text style={{ color: colors.text, fontSize: 12 }}>
-        *Quote provided by Programming Quotes API
+        *Quote provided by DummyJSON API
       </Text>
     </View>
   );

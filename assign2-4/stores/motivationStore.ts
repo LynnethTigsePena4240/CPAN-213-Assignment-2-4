@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+//https://programming-quotes-api.herokuapp.com/quotes/random
+//https://zenquotes.io/api/random
 
-const API_URL = 'https://programming-quotes-api.herokuapp.com/quotes/random';
+const API_URL = 'https://dummyjson.com/quotes/random';
 
 export type Quote = {
     content: string;
@@ -18,7 +20,7 @@ let motivationState: MotivationState = {
     isLoading: false,
     error: null,
 };
-let listeners: Array<() => void> = [];
+let listeners: (() => void)[] = [];
 
 const emitChange = () => {
     listeners.forEach(listener => listener());
@@ -56,12 +58,13 @@ export const useMotivation = () => {
             }
 
             const data = await response.json();
+            console.log('Quotable response:', data); 
 
-            if (data && data.en) {
+            if (data && data.quote) {
                 updateState({
                     quote: {
-                        content: data.en.trim(),
-                        author: data.author.trim() || 'Unknown'
+                        content: data.quote.trim(),
+                        author: (data.author || 'Unknown').trim(),
                     },
                     isLoading: false
                 });
@@ -70,8 +73,9 @@ export const useMotivation = () => {
             }
 
         } catch (e: any) {
+            console.log('Quote fetch error:', e)
             updateState({
-                error: "Failed to fetch quote. Please ensure you have a stable network connection.",
+                error: `Failed to fetch quote. ${e?.message ?? 'Unknown error'}`,
                 isLoading: false
             });
         }
