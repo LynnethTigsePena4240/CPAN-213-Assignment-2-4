@@ -38,7 +38,10 @@ function TaskFade({item, onToggle, onDelete}) {
           {item.title}
         </Text>
       </TouchableOpacity>
-      <Button title="Delete" onPress={deleteTask} />
+      <View style={styles.button}> 
+        <Button title="Delete" onPress={deleteTask} />
+      </View>
+     
     </Animated.View>
   )
 }
@@ -81,8 +84,8 @@ export default function TaskPage() {
       <Text style={styles.title}>Task Manager</Text>
 
       {notification && (
-        <View style={[styles.button, { backgroundColor: "#444", marginBottom: 10 }]}>
-          <Text style={styles.buttonText}>{notification}</Text>
+        <View style={ styles.notification}>
+          <Text style={styles.notificationText}>{notification}</Text>
         </View>
       )}
 
@@ -113,7 +116,9 @@ export default function TaskPage() {
           value={newTask}
           onChangeText={setNewTask}
         />
+        <View style = { styles.button}>
         <Button title="Add" onPress={handleAddTask} />
+        </View>
       </View>
 
 
@@ -185,14 +190,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    width:90,
+    borderRadius:10, 
+    overflow: "hidden", 
   },
-  buttonText: {
+  notificationText: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center",
+    textAlign:"center",
+    padding:10,
+    margin:3
+  },
+  notification:{
+    width:150,
+    position:"absolute", 
+    top:50, 
+    right:200, 
+    borderRadius:5,
+    backgroundColor:"#3e6ca9ff",
   },
   taskContainer: {
     width: '75%',
@@ -200,14 +215,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 5,
-    marginVertical: 5,
-    backgroundColor: "#333",
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: "#3e6ca9ff",
     borderRadius: 8,
     paddingRight: 40,
 
   },
   taskText: {
+    margin: 10,
     fontSize: 18,
     color: "#fff",
   },
