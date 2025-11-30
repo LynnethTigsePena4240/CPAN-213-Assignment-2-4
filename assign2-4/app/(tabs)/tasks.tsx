@@ -12,6 +12,7 @@ type Task = {
   id: string; 
   title: string; 
   completed:boolean; 
+  fade: Animated.Value;
 }
 
 
@@ -25,13 +26,24 @@ export default function TaskPage() {
 
   const addTask = () => {
     if (newTask.trim() === "") return;
+
+    const fadeEffect = new Animated.Value(0);
+
     const task: Task = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       title: newTask,
       completed: false,
+      fade: fadeEffect,
     };
     setTasks([...tasks, task]);
     setNewTask("");
+
+    // animatioon to fade in task added
+    Animated.timing(fadeEffect, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
   };
 
   const toggleTask = (id: string) => {
@@ -43,12 +55,12 @@ export default function TaskPage() {
   };
 
   // bounce animation function
-  const toggleTaskAnimation = (id: string) => {
+  const bounce = (id: string) => {
     bounceTask.setValue(1);
 
     Animated.sequence([
       Animated.timing(bounceTask, {
-        toValue: 1,
+        toValue: 1.1,
         duration: 100,
         useNativeDriver: true,
       }),
@@ -113,11 +125,14 @@ export default function TaskPage() {
         data={tasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
-          const scaleStyle = { transform: [{ scale: bounceTask }] };
+
+          const animationStyle = { opacity: item.fade,
+            transform: [{ scale: bounceTask }],
+          };
 
           return (
-            <Animated.View style={[styles.taskContainer, scaleStyle]}>
-              <TouchableOpacity onPress={() => toggleTask(item.id)} style={{ flex: 1 }}>
+            <Animated.View style={[styles.taskContainer, animationStyle]}>
+              <TouchableOpacity onPress={() => bounce(item.id)} style={{ flex: 1 }}>
                 <Text style={item.completed ? styles.taskTextCompleted : styles.taskText}>
                   {item.title}
                 </Text>
