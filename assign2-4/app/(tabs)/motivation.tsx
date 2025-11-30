@@ -1,4 +1,5 @@
-import { ActivityIndicator, Button, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { ActivityIndicator, Button, StyleSheet, Text, useColorScheme, View, Animated } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 
 const getThemedColors = (isDarkMode: boolean) => ({
@@ -13,6 +14,22 @@ export default function MotivationScreen() {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const colors = getThemedColors(isDarkMode);
+
+  // fade in animation for quote
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!quote || isLoading) {return;
+  }
+
+    fadeAnimation.setValue(0);
+    Animated.timing(fadeAnimation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [quote, isLoading]);
+   
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -35,14 +52,14 @@ export default function MotivationScreen() {
         )}
 
         {quote && !isLoading && (
-          <View>
+          <Animated.View style={{ opacity: fadeAnimation }}>
             <Text style={[styles.quoteText, { color: colors.text }]}>
               {`"${quote.content}"`}
             </Text>
             <Text style={[styles.authorText, { color: colors.text }]}>
               {`— ${quote.author}`}
             </Text>
-          </View>
+          </Animated.View>
         )}
       </View>
 
