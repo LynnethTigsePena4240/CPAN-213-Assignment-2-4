@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
 export type Task = {
-  id: string;
-  title: string;
-  completed: boolean;
+    id: string;
+    title: string;
+    completed: boolean;
 };
 
 let tasksState: Task[] = [];
@@ -25,7 +25,7 @@ export const useTasks = () => {
         const listener = () => {
             setTasks(tasksState);
         };
-        
+
         listeners.push(listener);
 
         return () => {
