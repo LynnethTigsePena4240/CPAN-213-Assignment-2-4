@@ -5,7 +5,7 @@ import { useTasks } from "../../stores/taskStore";
 import { useMotivation } from "../../stores/motivationStore";
 
 const getThemedColors = (isDarkMode: boolean) => ({
-  background: isDarkMode ? '#121212' : '#F0F0F0',
+  background: isDarkMode ? '#173981ff' : '#4b86adff',
   text: isDarkMode ? '#FFFFFF' : '#333333',
   card: isDarkMode ? '#1E1E1E' : '#FFFFFF',
   primary: '#007AFF',

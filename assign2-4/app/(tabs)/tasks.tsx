@@ -33,7 +33,7 @@ function TaskFade({item, onToggle, onDelete}) {
 
   return (
     <Animated.View style={[styles.taskContainer, { opacity: fadeAnimation }]}>
-      <TouchableOpacity style={styles.button} onPress={() => onToggle(item.id)}>
+      <TouchableOpacity onPress={() => onToggle(item.id)}>
         <Text style={[styles.taskText, item.completed && styles.taskTextCompleted]}>
           {item.title}
         </Text>
@@ -47,9 +47,17 @@ export default function TaskPage() {
   const { tasks, addTask, toggleTask, deleteTask, getProgress } = useTasks();
   const [newTask, setNewTask] = useState("");
   const [progress, setProgress] = useState(0);
+  // add a notification when tasks are added/deleted
+  const [notification, setNotification] = useState(null);
 
   const handleAddTask = () => {
+    const title = newTask.trim();
+    if (title === "") {
+      setNotification("Please enter a task.");
+      return;
+    }
     addTask(newTask);
+    setNotification('New task added: "' + newTask + '"');
     setNewTask("");
   };
 
@@ -58,11 +66,25 @@ export default function TaskPage() {
     setProgress(newProgress);
   }, [tasks]);
 
+  // notify user for 3 seconds
+  useEffect(() => {
+    if (!notification) return;
+
+    const timer = setTimeout(() => { setNotification(null); }, 3000);
+    return () => clearTimeout(timer);
+  }, [notification]);
+
   let barColor = progress >= 100 ? "green" : (progress >= 50 ? "yellow" : "red");
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Task Manager</Text>
+
+      {notification && (
+        <View style={[styles.button, { backgroundColor: "#444", marginBottom: 10 }]}>
+          <Text style={styles.buttonText}>{notification}</Text>
+        </View>
+      )}
 
       <Separator />
 
@@ -102,7 +124,9 @@ export default function TaskPage() {
           <TaskFade
             item={item}
             onToggle={() => toggleTask(item.id)}
-            onDelete={() => deleteTask(item.id)}
+            onDelete={(id) => { 
+              deleteTask(id); 
+              setNotification('Task deleted: "' + item.title + '"'); }} 
           />
         )}
       />
@@ -115,7 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 0,
     padding: 10,
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#4b86adff",
     paddingTop: 30
   },
   title: {
