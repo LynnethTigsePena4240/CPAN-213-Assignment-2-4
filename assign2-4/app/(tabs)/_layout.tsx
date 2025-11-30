@@ -40,13 +40,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <MaterialCommunityIcons size={28} name="robot-happy" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="weather"
-        options={{
-          title: 'Weather',
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons size={28} name="weather-partly-cloudy" color={color} />,
-        }}
-      />
     </Tabs>
   );
 }

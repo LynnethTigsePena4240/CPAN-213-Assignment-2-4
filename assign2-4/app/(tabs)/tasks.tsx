@@ -1,97 +1,72 @@
 import React, { useState, useEffect } from "react";
-import { View, Button, StyleSheet,Text ,TextInput, FlatList, TouchableOpacity} from "react-native";
+import { View, Button, StyleSheet, Text, TextInput, FlatList, TouchableOpacity } from "react-native";
 import ProgressBar from "../components/progressBar";
+import { useTasks } from "../../stores/taskStore";
 
-
-// manually creating space between each element 
-function Seperator(){
+function Seperator() {
   return <View style={styles.separator}></View>
 }
 
-type Task = { 
-  id: string; 
-  title: string; 
-  completed:boolean; 
-}
-
-
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { tasks, addTask, toggleTask, deleteTask, getProgress } = useTasks();
   const [newTask, setNewTask] = useState("");
   const [progress, setProgress] = useState(0);
 
-  const addTask = () => {
-    if (newTask.trim() === "") return;
-    const task: Task = {
-      id: Date.now().toString(),
-      title: newTask,
-      completed: false,
-    };
-    setTasks([...tasks, task]);
+  const handleAddTask = () => {
+    addTask(newTask);
     setNewTask("");
   };
 
-  const toggleTask = (id: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
-
-  // progress when tasks change
   useEffect(() => {
-    const completedCount = tasks.filter((t) => t.completed).length;
-    const newProgress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+    const newProgress = getProgress();
     setProgress(newProgress);
   }, [tasks]);
 
-  let barColor = progress >= 100 ? "green" : "blue";
+  let barColor = progress >= 100 ? "green" : (progress >= 50 ? "yellow" : "red");
 
   return (
     <View style={styles.container}>
-      <ProgressBar
-        progress={progress}
-        min={0}
-        max={100}
-        barColor={barColor}
-        backColor="#ddd"
-        borderColor="black"
-      />
-
-      <Seperator />
-      <Text style={styles.text}>{progress}%</Text>
-      <Seperator />
+      <Text style={styles.title}>Task Manager</Text>
 
       <Seperator />
 
-      <Text style={styles.text}>Task Manager</Text>
-      <Seperator />
-      <View style = { styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder="Add a new task"
-        value={newTask}
-        onChangeText={setNewTask}
-      />
-      <Seperator />
+      <View style={styles.progressSection}>
+        <ProgressBar
+          progress={progress}
+          min={0}
+          max={100}
+          barColor={barColor}
+          backColor="#ddd"
+          borderColor="black"
+        />
 
-      <Button title="Add" onPress={addTask} />
-      <Seperator />
+        <Seperator />
+        <Text style={styles.percentageText}>{progress}% Completed</Text>
       </View>
-    
+
+      <Seperator />
+
+      <Text style={styles.hintText}>Tap a task name to mark it complete!</Text>
+      <Seperator />
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Add a new task"
+          value={newTask}
+          onChangeText={setNewTask}
+        />
+        <Button title="Add" onPress={handleAddTask} />
+      </View>
+
 
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.taskContainer}>
-            <TouchableOpacity style= {styles.button} onPress={() => toggleTask(item.id)}>
-              <Text style={[styles.taskText,item.completed && styles.taskTextCompleted]}>
+            <TouchableOpacity style={styles.button} onPress={() => toggleTask(item.id)}>
+              <Text style={[styles.taskText, item.completed && styles.taskTextCompleted]}>
                 {item.title}
               </Text>
             </TouchableOpacity>
@@ -103,51 +78,60 @@ export default function TaskPage() {
   );
 }
 
-
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop:0,
+    marginTop: 0,
     padding: 10,
     backgroundColor: "#1e1e1e",
-    paddingTop:30
+    paddingTop: 30
   },
   title: {
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 28,
+    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
     marginBottom: 10,
   },
-  text: {
-    fontSize: 16,
+  progressSection: {
+    width: '33%',
+    alignSelf: 'center',
+  },
+  percentageText: {
+    fontSize: 20,
     fontWeight: "600",
     color: "#fff",
     textAlign: "center",
   },
+  hintText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#aaa",
+    textAlign: "center",
+    marginBottom: 5,
+  },
   inputContainer: {
+    width: '75%',
+    alignSelf: 'center',
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 5,
   },
   input: {
-    flex:1,
+    flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
-    marginBottom:10,
+    marginRight: 10,
     color: "#000",
-    backgroundColor:"#ccc",
+    backgroundColor: "#ccc",
   },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginBottom: 10
   },
   buttonText: {
     color: "white",
@@ -155,6 +139,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   taskContainer: {
+    width: '75%',
+    alignSelf: 'center',
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -166,17 +152,15 @@ const styles = StyleSheet.create({
 
   },
   taskText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#fff",
   },
   taskTextCompleted: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#aaa",
     textDecorationLine: "line-through",
   },
   separator: {
-    height: 1,
-    margin:10,
+    height: 10,
   },
 });
-
