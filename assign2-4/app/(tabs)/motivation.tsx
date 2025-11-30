@@ -47,7 +47,7 @@ export default function MotivationScreen() {
         setError("no quote found")
       }
     })
-    .catch((e) => setError(e?.message ?? 'Feild to fetch'))
+    .catch((e) => setError(e?.message ?? 'Failed to fetch'))
     .finally(()=> setLoading(false))
   }, []);
 
@@ -78,24 +78,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingTop: 70,
+    backgroundColor: '#000000',
   },
   title: {
     fontSize: 22,
     fontWeight: '600',
-    textAlign: 'center'
+    textAlign: 'center',
+    color: '#FFFFFF',
   },
   quotes: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    color: '#FFFFFF',
   },
   quotesText: {
     fontSize: 15,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
+    color: '#FFFFFF',
   },
   quotesAuthor:{
-    fontWeight:"600"
+    fontWeight:"600",
+    color: '#FFFFFF',
   }
   
 });

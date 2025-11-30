@@ -1,98 +1,115 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import React from 'react';
+import { StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { Link } from 'expo-router';
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+const getThemedColors = (isDarkMode: boolean) => ({
+  background: isDarkMode ? '#121212' : '#F0F0F0',
+  text: isDarkMode ? '#FFFFFF' : '#333333',
+  card: isDarkMode ? '#1E1E1E' : '#FFFFFF',
+  primary: '#007AFF',
+  secondaryText: isDarkMode ? '#AAAAAA' : '#666666',
+});
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+export default function OverviewScreen() {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const colors = getThemedColors(isDarkMode);
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.text }]}>
+        FocusHub Overview
+      </Text>
+
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          Top Tasks
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Display task 1]
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Display task 2]
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Display task 3]
+        </Text>
+        <Link href="/tasks" style={[styles.link, { color: colors.primary }]}>
+          Go to Full To-Do List
+        </Link>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          Daily Motivation
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Preview of the daily quote or motivational content]
+        </Text>
+        <Link href="/motivation" style={[styles.link, { color: colors.primary }]}>
+          Get Motivated
+        </Link>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          Weather Preview
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Display current city and temperature from Weather State]
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          Example: Brampton, 0°C, Snow
+        </Text>
+        <Link href="/weather" style={[styles.link, { color: colors.primary }]}>
+          View Full Weather Details
+        </Link>
+      </View>
+
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    paddingTop: 70,
+    paddingHorizontal: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 30,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  card: {
+    width: '100%',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+    paddingBottom: 5,
+  },
+  cardContent: {
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  link: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 10,
+    textAlign: 'right',
   },
 });
