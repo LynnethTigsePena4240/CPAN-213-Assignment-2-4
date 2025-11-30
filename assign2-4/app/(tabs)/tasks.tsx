@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Button, StyleSheet,Text ,TextInput, FlatList, TouchableOpacity} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Button, StyleSheet,Text ,TextInput, FlatList, TouchableOpacity, Animated} from "react-native";
 import ProgressBar from "../components/progressBar";
 
 
@@ -20,6 +20,9 @@ export default function TaskPage() {
   const [newTask, setNewTask] = useState("");
   const [progress, setProgress] = useState(0);
 
+  // bounce animation for task addition
+  const bounceTask = useRef(new Animated.Value(1)).current;
+
   const addTask = () => {
     if (newTask.trim() === "") return;
     const task: Task = {
@@ -37,6 +40,27 @@ export default function TaskPage() {
         task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
+  };
+
+  // bounce animation function
+  const toggleTaskAnimation = (id: string) => {
+    bounceTask.setValue(1);
+
+    Animated.sequence([
+      Animated.timing(bounceTask, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(bounceTask, {
+        toValue: 1,
+        friction: 3,
+        tension: 40,
+        useNativeDriver: true,
+      })
+    ]).start();
+
+    toggleTask(id);
   };
 
   const deleteTask = (id: string) => {
@@ -88,16 +112,20 @@ export default function TaskPage() {
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.taskContainer}>
-            <TouchableOpacity style= {styles.button} onPress={() => toggleTask(item.id)}>
-              <Text style={[styles.taskText,item.completed && styles.taskTextCompleted]}>
-                {item.title}
-              </Text>
-            </TouchableOpacity>
-            <Button title="Delete" onPress={() => deleteTask(item.id)} />
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const scaleStyle = { transform: [{ scale: bounceTask }] };
+
+          return (
+            <Animated.View style={[styles.taskContainer, scaleStyle]}>
+              <TouchableOpacity onPress={() => toggleTask(item.id)} style={{ flex: 1 }}>
+                <Text style={item.completed ? styles.taskTextCompleted : styles.taskText}>
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+              <Button title="Delete" color="red" onPress={() => deleteTask(item.id)} />
+            </Animated.View>
+          );
+        }}
       />
     </View>
   );
