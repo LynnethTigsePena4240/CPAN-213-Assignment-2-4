@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Button, StyleSheet, Text, TextInput, FlatList, TouchableOpacity, Animated } from "react-native";
-import ProgressBar from "../components/progressBar";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from "react-native";
 import { useTasks } from "../../stores/taskStore";
+import ProgressBar from "../components/progressBar";
+
+const getThemedColors = (isDarkMode: boolean) => ({
+  background: isDarkMode ? '#173981ff' : '#4b86adff',
+  text: isDarkMode ? '#FFFFFF' : '#333333',
+  card: isDarkMode ? '#1E1E1E' : '#FFFFFF',
+  primary: '#007AFF',
+});
 
 function Separator() {
   return <View style={styles.separator}></View>
@@ -53,6 +60,10 @@ export default function TaskPage() {
   // add a notification when tasks are added/deleted
   const [notification, setNotification] = useState(null);
 
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const colors = getThemedColors(isDarkMode);
+
   const handleAddTask = () => {
     const title = newTask.trim();
     if (title === "") {
@@ -80,8 +91,8 @@ export default function TaskPage() {
   let barColor = progress >= 100 ? "green" : (progress >= 50 ? "yellow" : "red");
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Task Manager</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.text }]}>Task Manager</Text>
 
       {notification && (
         <View style={ styles.notification}>
@@ -111,8 +122,9 @@ export default function TaskPage() {
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, ]}
           placeholder="Add a new task"
+          placeholderTextColor={isDarkMode ? "#999999" : "#555555"}
           value={newTask}
           onChangeText={setNewTask}
         />
@@ -145,12 +157,11 @@ const styles = StyleSheet.create({
     marginTop: 0,
     padding: 10,
     backgroundColor: "#4b86adff",
-    paddingTop: 30
+    paddingTop: 70
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
     textAlign: "center",
     marginBottom: 10,
   },
@@ -186,7 +197,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginRight: 10,
-    color: "#000",
+    color: "#333333",
     backgroundColor: "#ccc",
   },
   button: {
