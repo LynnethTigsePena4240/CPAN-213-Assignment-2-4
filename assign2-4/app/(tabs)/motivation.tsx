@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, useColorScheme, View, Animated } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 
+// theme colors for dark/light mode
 const getThemedColors = (isDarkMode: boolean) => ({
   background: isDarkMode ? '#173981ff' : '#4b86adff',
   text: isDarkMode ? '#FFFFFF' : '#333333',
@@ -15,21 +16,21 @@ export default function MotivationScreen() {
   const isDarkMode = colorScheme === 'dark';
   const colors = getThemedColors(isDarkMode);
 
-  // fade in animation for quote
+  // animation value for fading in new quotes
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
+  // restart fade animation whenever a new quote loads
   useEffect(() => {
-    if (!quote || isLoading) {return;
-  }
+    if (!quote || isLoading) return;
 
     fadeAnimation.setValue(0);
+
     Animated.timing(fadeAnimation, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start();
   }, [quote, isLoading]);
-   
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -37,6 +38,7 @@ export default function MotivationScreen() {
         Daily Motivation
       </Text>
 
+      {/* main card displaying quote or loading/error */}
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         {isLoading && (
           <View style={styles.loadingContainer}>
@@ -51,6 +53,7 @@ export default function MotivationScreen() {
           <Text style={[styles.errorText, { color: 'red' }]}>{error}</Text>
         )}
 
+        {/* fade-in animation for successful quote load */}
         {quote && !isLoading && (
           <Animated.View style={{ opacity: fadeAnimation }}>
             <Text style={[styles.quoteText, { color: colors.text }]}>
@@ -63,6 +66,7 @@ export default function MotivationScreen() {
         )}
       </View>
 
+      {/* fetch new quote button */}
       <Button
         title={isLoading ? "Loading..." : "New Quote"}
         onPress={fetchNewQuote}

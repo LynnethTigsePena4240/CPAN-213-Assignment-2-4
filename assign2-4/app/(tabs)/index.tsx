@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 import { useTasks } from "../../stores/taskStore";
 import { useMotivation } from "../../stores/motivationStore";
 
+// Basic color theme helper
 const getThemedColors = (isDarkMode: boolean) => ({
   background: isDarkMode ? '#173981ff' : '#4b86adff',
   text: isDarkMode ? '#FFFFFF' : '#333333',
@@ -13,29 +14,38 @@ const getThemedColors = (isDarkMode: boolean) => ({
 });
 
 export default function OverviewScreen() {
+  // Get top uncompleted tasks
   const { getTopTasks } = useTasks();
   const tasksToDisplay = getTopTasks();
 
+  // Get motivation quote
   const { quote, isLoading: isQuoteLoading } = useMotivation();
 
+  // Handle theme colors
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const colors = getThemedColors(isDarkMode);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+
+      {/* Header */}
       <Text style={[styles.title, { color: colors.text }]}>
         Task Tracker
       </Text>
 
+      {/* Top tasks card */}
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
           Top Tasks
         </Text>
 
         {tasksToDisplay.length > 0 ? (
-          tasksToDisplay.map((task, index) => (
-            <Text key={task.id} style={[styles.cardContent, { color: colors.secondaryText }]}>
+          tasksToDisplay.map((task) => (
+            <Text
+              key={task.id}
+              style={[styles.cardContent, { color: colors.secondaryText }]}
+            >
               {`• ${task.title}`}
             </Text>
           ))
@@ -45,35 +55,59 @@ export default function OverviewScreen() {
           </Text>
         )}
 
+        {/* Link to tasks page */}
         <Link href="/tasks" style={[styles.link, { color: colors.primary }]}>
           Go to Full To-Do List
         </Link>
       </View>
 
+      {/* Motivation card */}
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
           Daily Motivation
         </Text>
+
         {isQuoteLoading ? (
-          <Text style={[styles.cardContent, { color: colors.secondaryText, fontStyle: 'italic' }]}>
+          <Text
+            style={[
+              styles.cardContent,
+              { color: colors.secondaryText, fontStyle: 'italic' },
+            ]}
+          >
             Loading motivation...
           </Text>
         ) : (
           <>
-            <Text style={[styles.cardContent, { color: colors.secondaryText, fontStyle: 'italic' }]}>
-              {`"${quote?.content.substring(0, 50)}${quote && quote.content.length > 50 ? '...' : ''}"`}
+            <Text
+              style={[
+                styles.cardContent,
+                { color: colors.secondaryText, fontStyle: 'italic' },
+              ]}
+            >
+              {`"${quote?.content.substring(0, 50)}${quote && quote.content.length > 50 ? '...' : ''
+                }"`}
             </Text>
-            <Text style={[styles.cardContent, { color: colors.secondaryText, textAlign: 'right', marginTop: 5 }]}>
+
+            <Text
+              style={[
+                styles.cardContent,
+                {
+                  color: colors.secondaryText,
+                  textAlign: 'right',
+                  marginTop: 5,
+                },
+              ]}
+            >
               {`– ${quote?.author}`}
             </Text>
           </>
         )}
 
+        {/* Link to motivation page */}
         <Link href="/motivation" style={[styles.link, { color: colors.primary }]}>
           Get Motivated
         </Link>
       </View>
-
     </View>
   );
 }

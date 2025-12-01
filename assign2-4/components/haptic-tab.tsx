@@ -3,12 +3,14 @@ import { PlatformPressable } from '@react-navigation/elements';
 import * as Haptics from 'expo-haptics';
 
 export function HapticTab(props: BottomTabBarButtonProps) {
+  const { pointerEvents, ...rest } = props as any;
+
   return (
     <PlatformPressable
-      {...props}
+      {...rest}
       onPressIn={(ev) => {
+        // Soft haptic feedback on iOS when pressing down
         if (process.env.EXPO_OS === 'ios') {
-          // Add a soft haptic feedback when pressing down on the tabs.
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
         props.onPressIn?.(ev);
